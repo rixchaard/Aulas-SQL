@@ -1,0 +1,146 @@
+create table Cliente (
+    cpf int primary key,
+    nome varchar(50) not null,
+    endereco varchar(50) not null,
+    numero numeric (14)
+);
+
+create table Veiculo (
+    renavan int primary key, 
+    chassi varchar(50) not null,
+    placa varchar(50) not null,
+    modelo varchar(50),
+    cor varchar(50),
+    situacao varchar(50),
+    cliente int references cliente (cpf)
+);
+
+create table relatoCliente(
+    id int primary key,
+    problema text not null,
+    data date,
+    veiculo int references veiculo(renavan)
+
+);
+
+create table orcamento (
+    id int primary key,
+    valor numeric(10,2),
+    data date,
+    situacao varchar(50),
+    mecanico varchar(50),
+    totalHoras numeric (10,2),
+    previsaoEnt date,
+    formaPag varchar(50),
+    veiculo int references veiculo (renavan)
+);
+
+create table servico (
+    id int primary key,
+    descricao text not null,
+    custo numeric(10,2),
+    tempo numeric(6,2)
+);
+
+create table peca (
+    id int primary key,
+    descricao text not null,
+    custo numeric(10,2)
+);
+
+
+create table ItemServico(
+    orcamento int,
+    servico int,
+    situacao varchar(50),
+    constraint pk_itens primary key (orcamento, servico),
+    constraint fk_itens_orc foreign key (orcamento) references orcamento (id),
+    constraint fk_itens_serv foreign key (servico) references servico (id)
+);
+
+create table ItemPeca(
+    peca int,
+    orcamento int,
+    quantidade int,
+    custoTotalPeca numeric (10,2),
+    situacao varchar(50),
+    constraint pk_itemp primary key (orcamento, peca),
+    constraint fk_itemp_orc foreign key (orcamento) references orcamento(id),
+    constraint fk_itemp_pec foreign key (peca) references peca(id)
+);
+
+-- -----------------------------------------------
+/* Crie todas as sequences necessárias. */
+
+create sequence seq_relato;
+create sequence seq_servico;
+create sequence seq_peca;
+create sequence seq_orc;
+
+-- -----------------------------------------------
+/* Insira 3 registros em cada tabela. Preencha valores para
+todos os campos da tabela. Utilize as sequences criadas e insert 
+com query quando necessário.  */
+
+
+insert into cliente values (123456789, 'Maria', 'Rua A', 999999999
+                            
+insert into veiculo values (12345, 'asd123', 'abc1234', 'fox', 'azul', 'pronto', (select cpf from cliente where nome ilike 'Maria'));
+
+insert into relatocliente values (nextval('seq_relato'), 'problema', '2023-05-22', (select renavan from veiculo where placa ='abc1234'));
+
+insert into orcamento values (nextval('seq_orc'), 780.00, '2023-05-22', 'aprovado', 'joao', 7.30, '2023-05-23', 'dinheiro', (select renavan from veiculo where placa ='abc1234'));
+
+insert into servico values (nextval('seq_servico'),'servico 1', 100.50, 7.30);
+                            
+insert into itemservico values (1, (select id from servico where descricao ilike 'servico 1', 'aprovado');
+                                 
+insert into itempeca values (1, (select id from peca where descricao ilike 'peca 1', 1, 350.00, 'aprovado'));
+
+-- -----------------------------------------------
+/*Crie uma função que devolva um histórico dos problemas de um determinado veículo, em
+ordem cronológica, passando o renavan. */
+
+CREATE FUNCTION problemas ()
+'
+    Select
+'
+LANGUAGE 'sql';
+
+
+-- -----------------------------------------------
+/*5. Crie uma função que devolva todos os veículos de um determinado cliente, passando o nome
+do cliente como parâmetro. */
+
+
+
+
+-- -----------------------------------------------
+/*6. Crie uma função que devolva todas as peças utilizadas em um determinado orçamento,
+ordenadas alfabeticamente, passando o código do orçamento como parâmetro.*/
+
+
+
+
+-- -----------------------------------------------
+/*7. Crie uma função que devolva todos os serviços realizados em um determinado orçamento,
+ordenados alfabeticamente, passando o código do orçamento como parâmetro.*/
+
+
+
+
+-- -----------------------------------------------
+/*8. Crie uma função que devolva o total gasto por um determinado cliente na oficina, passando
+o nome do cliente como parâmetro.*/
+
+
+
+
+-- ------------------------------------------------- -----------------------------------------------
+/*9. Crie uma função para excluir um orçamento, passando o código do orçamento como
+parâmetro.*/
+
+
+
+
+-- -----------------------------------------------

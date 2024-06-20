@@ -1,0 +1,113 @@
+1. Crie as tabelas apresentadas no Modelo Relacional. Utilize constraint para a indicação das 
+chaves primárias e estrangeiras e dê especial atenção às restrições apresentadas na 
+descrição do sistema. 
+Locacao(id, cliente, filme, dt_locacao, dt_prev_entrega, dt_entrega, total) 
+
+
+
+
+
+
+Create table Cliente (
+id integer primary key,
+nome varchar (100) not null,
+cpf numeric (11) not null,
+telefone numeric (11) not null
+);
+
+Create table Dependente(
+id integer primary key,
+nome varchar (100) not null,
+responsavel  integer,
+constraint fk_responsavel foreign key (responsavel) references responsavel (id)  
+);
+
+Create Table Filme(
+id integer primary key,
+titulo varchar (150) not null,
+duracao numeric (10,2),
+sinopse varchar (500),
+ano_lancamento date,
+genero varchar (100) not null,
+tipo varchar (100)
+);
+
+Create table Genero (
+id integer primary key,
+nome varchar (100)
+);
+
+Create Table tipo (
+id integer primary key,
+nome varchar (100),
+valor numeric (10,2) not null,
+qtd_dias numeric (10)
+);
+
+Create table locacao (
+id integer primary key,
+cliente integer,
+filme integer,
+dt_locacao date,
+dt_prev_entrega date,
+dt_entrega_total date,
+constraint fk_cliente foreign key (cliente) references cliente (id),
+constraint fk_filme foreign key (filme) references filme (id)   
+);
+
+create table responsavel (
+    id int primary key,
+    nome varchar(150)
+);
+
+
+-- ------------------------------------------------
+2. Crie todas as sequences necessárias. 
+
+Create sequence seq_cliente;
+Create sequence seq_Dependentes;
+Create sequence seq_Filme;
+Create sequence seq_Genero;
+Create sequence seq_tipo;
+Create sequence seq_locacao;
+
+-- ------------------------------------------------
+3. Insira 3 registros em cada tabela. Preencha valores para todos os campos da tabela. Utilize 
+as sequences criadas e insert com query quando necessário. 
+
+insert into Cliente nextval (nome,cpf,telefone)
+
+
+-- ------------------------------------------------
+4. Crie uma função para inserir um novo filme. Todos os dados do filme devem ser passados 
+como parâmetro, acompanhados dos nomes do gênero e tipo. 
+
+
+
+-- ------------------------------------------------
+5. Insira um novo filme utilizando a função criada no exercício 4. 
+
+
+
+
+-- ------------------------------------------------
+6. Crie uma função que devolva a quantidade de dias que um filme pode ficar com o cliente, 
+passando o nome do filme. 
+
+
+
+-- ------------------------------------------------
+7. Crie uma função para registrar uma locação, passando como parâmetros o nome do cliente 
+e o nome do filme a ser alugado. Antes de inserir, verifique a existência do filme e do cliente. 
+Utilize a função current_date para obter a data corrente. 
+
+
+
+
+-- ------------------------------------------------
+8. Insira uma locação utilizando a função criada no exercício 7. 
+9. Crie uma função para registrar a devolução de um filme, passando como parâmetro o código 
+da locação. Não esqueça de calcular a multa, caso ela exista.
+
+
+

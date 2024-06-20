@@ -1,0 +1,144 @@
+create table curso(
+id numeric(5),
+nome varchar(100) not null,
+constraint curso_pkey primary key (id)
+);
+create table aluno(
+rgm numeric(6),
+nome varchar(60) not null,
+curso numeric(5) not null,
+constraint pk_aluno_rgm primary key (rgm),
+constraint aluno_curso_fkey foreign key (curso)
+references curso (id)
+);
+create table disciplina(
+codigo numeric(6),
+nome varchar(60) not null,
+constraint pk_disciplina_codigo primary key (codigo)
+);
+create table tiponota(
+codigo numeric(6),
+nome varchar(60) not null check (nome in(‘p1’, ‘p2’, ‘exame’)),
+constraint tiponota_pkey primary key (codigo)
+);
+
+
+create table notas(
+id numeric(5),
+rgm_aluno numeric(6),
+codigo_disciplina numeric(6),
+tipo_nota numeric(6),
+nota numeric(4,2),
+constraint notas_pkey primary key (id),
+constraint notas_codigo_disc_fkey foreign key (codigo_disciplina)
+references disciplina (codigo),
+constraint notas_rgm_aluno_fkey foreign key (rgm_aluno)
+references aluno (rgm),
+constraint notas_tipo_nota_fkey foreign key (tipo_nota)
+references tiponota (codigo)
+);
+
+
+create table situacao(
+aluno numeric(5),
+situacao varchar(100) check (situacao in(‘aprovado’,
+‘reprovado’, ‘cursando’, ‘dp’)),
+disciplina numeric(6) not null,
+id serial not null,
+constraint id primary key (id),
+constraint disc foreign key (disciplina)
+references disciplina (codigo),
+constraint pessoa foreign key (aluno) references aluno (rgm)
+);
+
+
+1. Criar uma função para saber quais notas são de determinado tipo, passando o tipo da nota
+por parâmetro.
+
+create function notastipo(numeric)
+returns setof numeric as
+$$
+select id
+from notas
+where tipo_nota = $1;
+$$
+language 'sql';
+
+-- -------------------------------------------------------------
+2. Criar uma função para verificar se o tipo da nota existe.
+
+create function notaexiste(tipo varchar)
+returns text as 
+$$
+declare resp text;
+begin
+    if tipo in (select nome from tiponota) then
+        resp:= 'Tipo de nota existe';
+    else
+        resp:= 'Tipo de nota não existe';
+    end if;
+    return(resp);
+end;
+$$
+language 'sql';
+
+
+
+
+
+-- -------------------------------------------------------------
+3. Criar uma função para inserir uma nota na tabela de notas usando o plpgsql. Mas antes de
+inserir a nota verificar se o tipo da nota existe na tabela tiponota.
+
+
+
+-- -------------------------------------------------------------
+4. Criar uma função que retorne a nota p1 do aluno passando como parâmetro rgm e a
+disciplina.
+
+create function notap1(numeric, varchar)
+return numeric as 
+$$
+	select n.nota
+	from notas n, tiponota t, desciplina d
+	where n.rgm_aluno = $1 and
+	d.nome ilike $2 and
+	t.nome ilike 'p1' and
+	n.tipo_nota = t.codigo and
+	n.codigo_disciplina = d.codigo;
+$$
+language 'sql'
+
+-- -------------------------------------------------------------
+5. Criar uma função que retorne a nota p2 do aluno passando como parâmetro o rgm e a
+disciplina.
+
+
+create function notap1(numeric, varchar)
+return numeric as 
+$$
+	select n.nota
+	from notas n, tiponota t, desciplina d
+	where n.rgm_aluno = $1 and
+	d.nome ilike $2 and
+	t.nome ilike 'p2' and
+	n.tipo_nota = t.codigo and
+	n.codigo_disciplina = d.codigo;
+$$
+language 'sql'
+
+-- -------------------------------------------------------------
+6. Criar uma função que retorne a media do aluno (p1+p2)/2, passando o rgm do aluno e a
+disciplina como parâmetros.
+
+create function calculamedia (rgm, numeric, disc varchar)
+returns numeric as
+$$
+	declare m numeric,
+	begin
+	  m:=(notap1(rgm, disc) + notap2(rgm, disc)/2,
+	  return m;
+	end;
+$$
+language 'plpgsql';
+
